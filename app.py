@@ -12,10 +12,18 @@ for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
 if prompt := st.chat_input():
-    client = OpenAI(api_key=openai_api_key)
+    # Add the user's message to the session state
     st.session_state.messages.append({"role": "user", "content": prompt})
-    st.chat_message("user").write(prompt)
-    response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.messages)
-    msg = response.choices[0].message.content
+
+    # Directly use the openai module to get a response from the chat model
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=st.session_state.messages
+    )
+
+    # Extract the message content from the response
+    msg = response.choices[0].message["content"]
+
+    # Append the assistant's response to the session state and display it
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant").write(msg)
