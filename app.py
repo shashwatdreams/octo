@@ -1,42 +1,41 @@
 import openai
 import streamlit as st
 
-# Set the OpenAI API key
+# Assuming OPENAI_API_KEY is correctly set in your Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.title("💬 Chatbot")
 st.caption("🚀 A streamlit chatbot powered by OpenAI LLM")
 
-# Initialize session state for messages if it doesn't already exist
 if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+    st.session_state["messages"] = [{"role": "system", "content": "How can I help you?"}]
 
-# Display previous messages
+# Display past messages
 for msg in st.session_state["messages"]:
-    st.chat_message(role=msg["role"], body=msg["content"])
+    if msg["role"] == "user":
+        st.chat_message(msg["content"], is_user=True)
+    else:
+        st.chat_message(msg["content"])
 
-# Handle new user input
-prompt = st.chat_input("Type your message:")
+# Input from user
+prompt = st.chat_input("You", key="chat_input")
 if prompt:
     # Add the user's message to the session state
     st.session_state["messages"].append({"role": "user", "content": prompt})
 
-    # Prepare messages for the API request
-    messages_formatted = [{"role": msg["role"], "content": msg["content"]} for msg in st.session_state["messages"]]
+    try:
+        # Using the OpenAI Chat API to get a response from the chat model
+        chat_completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=st.session_state["messages"]
+        )
+        
+        # Extract the message content from the response
+        msg = chat_completion.choices[0].message["content"]
+        
+        # Append the assistant's response to the session state and display it
+        st.session_state["messages"].append({"role": "system", "content": msg})
+        st.chat_message(msg)
 
-    # Use the Completion API to get a response
-    response = openai.Completion.create(
-        model="gpt-3.5-turbo",
-        prompt=messages_formatted,
-        temperature=0.7,
-        max_tokens=150,
-        n=1,
-        stop=None,
-        user="user-id-or-session-id"
-    )
-
-    # Extract and display the response
-    if response and response.choices:
-        answer = response.choices[0].text.strip()
-        st.session_state["messages"].append({"role": "assistant", "content": answer})
-        st.chat_message(role="assistant", body=answer)
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
