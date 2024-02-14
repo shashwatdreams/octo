@@ -25,7 +25,7 @@ if prompt:
 
     try:
         # Using the OpenAI Chat API to get a response from the chat model
-        chat_completion = openai.ChatCompletion.create(
+        chat_completion = openai.Completion.create(
             model="gpt-3.5-turbo",
             messages=st.session_state["messages"]
         )
