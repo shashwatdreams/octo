@@ -16,8 +16,8 @@ if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     # Directly use the openai module to get a response from the chat model
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
+    response = openai.Completion.create(
+        model="gpt-3.5-turbo",
         messages=st.session_state.messages
     )
 
