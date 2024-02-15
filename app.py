@@ -3,7 +3,6 @@ import streamlit as st
 import hmac
 
 st.set_page_config(
-    layout="wide",
     menu_items={
         'About': "The world is yours"
     }
