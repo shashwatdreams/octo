@@ -46,7 +46,7 @@ with col1:
     st.title("octo")
 with col2:
     # Use the model_mapping keys for the selectbox display options
-    model_selection = st.selectbox(list(model_mapping.keys()), key="openai_model")
+    model_selection = st.selectbox("", list(model_mapping.keys()), key="openai_model")
 
 # Initialize the OpenAI client with the API key
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
