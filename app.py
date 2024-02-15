@@ -1,41 +1,33 @@
-import openai
+from openai import OpenAI
 import streamlit as st
 
-# Assuming OPENAI_API_KEY is correctly set in your Streamlit secrets
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+st.title("ChatGPT-like clone")
 
-st.title("💬 Chatbot")
-st.caption("🚀 A streamlit chatbot powered by OpenAI LLM")
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+if "openai_model" not in st.session_state:
+    st.session_state["openai_model"] = "gpt-3.5-turbo"
 
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "system", "content": "How can I help you?"}]
+    st.session_state.messages = []
 
-# Display past messages
-for msg in st.session_state["messages"]:
-    if msg["role"] == "user":
-        st.chat_message(msg["content"], is_user=True)
-    else:
-        st.chat_message(msg["content"])
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# Input from user
-prompt = st.chat_input("You", key="chat_input")
-if prompt:
-    # Add the user's message to the session state
-    st.session_state["messages"].append({"role": "user", "content": prompt})
+if prompt := st.chat_input("What is up?"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-    try:
-        # Using the OpenAI Chat API to get a response from the chat model
-        chat_completion = openai.Completion.create(
-            model="gpt-3.5-turbo",
-            messages=st.session_state["messages"]
+    with st.chat_message("assistant"):
+        stream = client.chat.completions.create(
+            model=st.session_state["openai_model"],
+            messages=[
+                {"role": m["role"], "content": m["content"]}
+                for m in st.session_state.messages
+            ],
+            stream=True,
         )
-        
-        # Extract the message content from the response
-        msg = chat_completion.choices[0].message["content"]
-        
-        # Append the assistant's response to the session state and display it
-        st.session_state["messages"].append({"role": "system", "content": msg})
-        st.chat_message(msg)
-
-    except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
+        response = st.write_stream(stream)
+    st.session_state.messages.append({"role": "assistant", "content": response})
