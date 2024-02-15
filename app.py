@@ -4,7 +4,7 @@ import hmac
 
 st.set_page_config(
     menu_items={
-        'About': "The world is yours"
+        'About': "The world is yours\nhttps://github.com/shashwatdreams/octo"
     }
 )
 
@@ -31,7 +31,7 @@ if not check_password():
 
 model_mapping = {
     "GPT-3.5-Turbo": "gpt-3.5-turbo-0125",
-    "GPT-4": "gpt-4"
+    "GPT-4": "gpt-4-turbo-preview"
 }
 
 
