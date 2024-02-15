@@ -21,27 +21,6 @@ def check_password():
         st.error("😕 Password incorrect")
     return False
 
-password_correct = check_password()
-if password_correct:
-    # HTML for the unlocking effect
-    unlocking_animation_html = """
-    <div style="text-align: center;">
-        <div class="lock-animation" style="font-size: 48px; display: inline-block; animation: unlock 2s ease-in-out forwards;">
-            🔒
-        </div>
-    </div>
-    <style>
-    @keyframes unlock {
-        0% { transform: rotate(0deg); }
-        50% { transform: rotate(20deg); }
-        100% { transform: rotate(-45deg); }
-    }
-    </style>
-    """
-    st.markdown(unlocking_animation_html, unsafe_allow_html=True)
-    st.success("Unlocked Successfully. Welcome!")
-
-
 if not check_password():
     st.stop()
 
