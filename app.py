@@ -16,37 +16,29 @@ def check_password():
     if st.session_state.get("password_correct", False):
         return True
     
-    # Password input field
     st.text_input("Password", type="password", on_change=password_entered, key="password")
     if "password_correct" in st.session_state:
         st.error("😕 Password incorrect")
     return False
 
-# Password check
 if not check_password():
     st.stop()
 
-# Title and model selection using columns for layout
 col1, col2 = st.columns([3, 1])
 with col1:
     st.title("octo")
 with col2:
-    # Model selection dropdown
-    model_selection = st.selectbox("Choose Model:", ["gpt-3.5-turbo", "gpt-4"], key="openai_model")
+    model_selection = st.selectbox("", ["gpt-3.5-turbo", "gpt-4"], key="openai_model")
 
-# Initialize OpenAI client
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-# Initialize session state for messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display previous chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Chat input
 if prompt := st.chat_input("Message Octo..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
