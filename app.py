@@ -6,7 +6,8 @@ import hmac
 
 st.set_page_config(
     menu_items={
-        'About': "# check it"
+        'About': "The world is yours"
+        'About': "github.com/shashwatdreams/octo"
     }
 )
 
