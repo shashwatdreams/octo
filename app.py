@@ -41,6 +41,12 @@ model_mapping = {
     "GPT-4": "gpt-4"
 }
 
+st.markdown("""
+    <style>
+    .block-container{padding-top:2rem!important;}
+    </style>
+""", unsafe_allow_html=True)
+
 # Create columns for layout
 col1, col2 = st.columns([3, 1])
 with col1:
