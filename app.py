@@ -3,6 +3,7 @@ import streamlit as st
 import hmac
 
 st.set_page_config(
+    page_title="Octo Engine",
     menu_items={
         'About': "The world is yours\nhttps://github.com/shashwatdreams/octo"
     }
@@ -81,7 +82,6 @@ hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
-            header {visibility: hidden;}
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
