@@ -3,6 +3,7 @@ import streamlit as st
 import hmac
 
 st.set_page_config(
+    layout="wide",
     menu_items={
         'About': "The world is yours"
     }
@@ -28,12 +29,6 @@ def check_password():
 
 if not check_password():
     st.stop()
-
-st.markdown("""
-    <a href="https://github.com/shashwatdreams/octo" target="_blank">
-        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="float:right; max-height: 32px; margin: 10px">
-    </a>
-""", unsafe_allow_html=True)
 
 model_mapping = {
     "GPT-3.5-Turbo": "gpt-3.5-turbo-0125",
