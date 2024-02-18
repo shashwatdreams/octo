@@ -30,7 +30,7 @@ if not check_password():
     st.stop()
 
 model_mapping = {
-    "GPT-3.5": "gpt-3.5-turbo-0125",
+    "GPT-3.5": "GPT-3.5-0125",
     "GPT-4": "gpt-4-turbo-preview",
     "Google Gemini": "google-gemini"
 }
@@ -47,7 +47,7 @@ with col1:
 with col2:
     model_selection = st.selectbox("", list(model_mapping.keys()), key="openai_model")
 
-if model_selection in ["GPT-3.5-Turbo", "GPT-4"]:
+if model_selection in ["GPT-3.5", "GPT-4"]:
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 elif model_selection == "Google Gemini":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
@@ -67,7 +67,7 @@ if prompt := st.chat_input("Message Octo..."):
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    if model_selection in ["GPT-3.5-Turbo", "GPT-4"]:
+    if model_selection in ["GPT-3.5", "GPT-4"]:
         with st.chat_message("assistant"):
             selected_model = model_mapping[model_selection]
             stream = client.chat.completions.create(
