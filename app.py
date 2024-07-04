@@ -2,6 +2,7 @@ from openai import OpenAI
 import streamlit as st
 import hmac
 import google.generativeai as gen_ai
+import anthropic
 
 st.set_page_config(
     page_title="Octo Engine",
@@ -32,7 +33,8 @@ if not check_password():
 model_mapping = {
     "GPT-3.5": "gpt-3.5-turbo-0125",
     "GPT-4": "gpt-4-turbo-preview",
-    "Google Gemini": "google-gemini"
+    "Google Gemini": "google-gemini",
+    "Claude 3.5": "claude-3.5-sonnet"
 }
 
 st.markdown("""
@@ -54,6 +56,8 @@ elif model_selection == "Google Gemini":
     model = gen_ai.GenerativeModel('gemini-pro')
     if "chat_session" not in st.session_state:
         st.session_state.chat_session = model.start_chat(history=[])
+elif model_selection == "Claude 3.5":
+    client = anthropic.Client(api_key=st.secrets["ANTHROPIC_API_KEY"])
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -82,6 +86,14 @@ if prompt := st.chat_input("Message Octo..."):
             gemini_response = st.session_state.chat_session.send_message(prompt)
             st.markdown(gemini_response.text)
             st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
+    elif model_selection == "Claude 3.5":
+        with st.chat_message("assistant"):
+            anthropic_response = client.completions.create(
+                model=model_mapping[model_selection],
+                messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+            )
+            st.markdown(anthropic_response['completion'])
+            st.session_state.messages.append({"role": "assistant", "content": anthropic_response['completion']})
 
 hide_st_style = """
             <style>
