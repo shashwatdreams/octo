@@ -90,7 +90,8 @@ if prompt := st.chat_input("Message Octo..."):
         with st.chat_message("assistant"):
             anthropic_response = client.completions.create(
                 model=model_mapping[model_selection],
-                messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                prompt=prompt,
+                max_tokens_to_sample=300,  # You can adjust the max tokens as needed
             )
             st.markdown(anthropic_response['completion'])
             st.session_state.messages.append({"role": "assistant", "content": anthropic_response['completion']})
