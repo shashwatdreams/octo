@@ -11,6 +11,7 @@ st.set_page_config(
     }
 )
 
+
 def check_password():
     def password_entered():
         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
@@ -31,7 +32,7 @@ if not check_password():
     st.stop()
 
 model_mapping = {
-    "GPT-3.5": "gpt-3.5-turbo-0125",
+    "GPT-3.5": "gpt-3.5-turbo",
     "GPT-4": "gpt-4-turbo-preview",
     "Google Gemini": "google-gemini",
     "Claude 3.5": "claude-3.5-sonnet"
