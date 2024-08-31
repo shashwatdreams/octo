@@ -4,8 +4,6 @@ import hmac
 import google.generativeai as gen_ai
 import anthropic
 
-st.write(st.secrets)
-
 st.set_page_config(
     page_title="Octo Engine",
     menu_items={
