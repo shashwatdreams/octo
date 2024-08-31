@@ -12,6 +12,7 @@ st.set_page_config(
 )
 
 def check_password():
+def check_password():
     def password_entered():
         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
             st.session_state["password_correct"] = True
@@ -80,7 +81,10 @@ if prompt := st.chat_input("What is up?", key="chat_input"):
                 ],
                 stream=True,
             )
-            response = st.write_stream(stream)
+            response = ""
+            for chunk in stream:
+                response += chunk["choices"][0]["delta"].get("content", "")
+                st.markdown(response)
         st.session_state.messages.append({"role": "assistant", "content": response})
 
     elif model_selection == "Google Gemini":
