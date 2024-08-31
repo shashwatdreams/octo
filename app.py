@@ -11,7 +11,6 @@ st.set_page_config(
     }
 )
 
-# Function to check the password
 def check_password():
     def password_entered():
         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
@@ -28,11 +27,9 @@ def check_password():
         st.error("😕 Password incorrect")
     return False
 
-# Stop execution if password is incorrect
 if not check_password():
     st.stop()
 
-# Model mapping with only GPT-4o-Mini and Google Gemini
 model_mapping = {
     "GPT-4o-Mini": "gpt-4o-mini",
     "Google Gemini": "google-gemini",
@@ -50,25 +47,21 @@ with col1:
 with col2:
     model_selection = st.selectbox("", list(model_mapping.keys()), key="openai_model")
 
-# Initialize clients based on model selection
 if model_selection == "GPT-4o-Mini":
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 elif model_selection == "Google Gemini":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     model = gen_ai.GenerativeModel('gemini-pro')
     if "chat_session" not in st.session_state:
         st.session_state.chat_session = model.start_chat(history=[])
 
-# Initialize message history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display previous messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Handle user input
 if prompt := st.chat_input("Message Octo..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -77,11 +70,9 @@ if prompt := st.chat_input("Message Octo..."):
     if model_selection == "GPT-4o-Mini":
         try:
             with st.chat_message("assistant"):
-                selected_model = model_mapping[model_selection]
-                response = client.chat_completions.create(  # Corrected method name
-                    model=selected_model,
+                response = openai.ChatCompletion.create(
+                    model=model_mapping[model_selection],
                     messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
-                    stream=False,  # Set to False to avoid streaming issues
                 )
                 assistant_message = response['choices'][0]['message']['content']
                 st.markdown(assistant_message)
@@ -98,7 +89,6 @@ if prompt := st.chat_input("Message Octo..."):
         except Exception as e:
             st.error(f"Error: {e}")
 
-# Hide Streamlit's default elements
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
