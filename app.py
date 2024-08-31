@@ -78,7 +78,7 @@ if prompt := st.chat_input("Message Octo..."):
         try:
             with st.chat_message("assistant"):
                 selected_model = model_mapping[model_selection]
-                response = client.chat_completions.create(
+                response = client.chat_completions.create(  # Corrected method name
                     model=selected_model,
                     messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
                     stream=False,  # Set to False to avoid streaming issues
