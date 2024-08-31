@@ -3,6 +3,7 @@ import streamlit as st
 import hmac
 import google.generativeai as gen_ai
 
+
 st.set_page_config(
     page_title="Octo Engine",
     menu_items={
@@ -44,7 +45,7 @@ col1, col2 = st.columns([3, 1])
 with col1:
     st.title("Octo")
 with col2:
-    model_selection = st.selectbox("Select a model", list(model_mapping.keys()), key="openai_model")
+    model_selection = st.selectbox("", list(model_mapping.keys()), key="openai_model")
 
 if model_selection == "GPT-3.5":
     openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -76,11 +77,10 @@ if prompt := st.chat_input("What is up?"):
                 ],
                 stream=True,
             )
-            # Handle the streaming response
+            # Instead of using `st.write_stream`, handle the stream manually
             collected_messages = ""
             for chunk in response:
-                content = chunk['choices'][0]['delta'].get('content', '')
-                collected_messages += content
+                collected_messages += chunk['choices'][0]['delta'].get('content', '')
                 st.markdown(collected_messages)
             st.session_state.messages.append({"role": "assistant", "content": collected_messages})
     
