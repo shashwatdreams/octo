@@ -4,7 +4,6 @@ import hmac
 import google.generativeai as gen_ai
 import anthropic
 
-# Debug: Check if the secrets are being loaded
 st.write(st.secrets)
 
 st.set_page_config(
@@ -14,7 +13,6 @@ st.set_page_config(
     }
 )
 
-# Function to check the password
 def check_password():
     def password_entered():
         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
@@ -31,13 +29,11 @@ def check_password():
         st.error("😕 Password incorrect")
     return False
 
-# Stop execution if password is incorrect
 if not check_password():
     st.stop()
 
-# Model mapping with only GPT-4o-Mini and Google Gemini
 model_mapping = {
-    "GPT-4o-Mini": "gpt-4o-mini",
+    "GPT-3.5": "gpt-3.5-turbo",
     "Google Gemini": "google-gemini",
 }
 
@@ -54,8 +50,9 @@ with col2:
     model_selection = st.selectbox("", list(model_mapping.keys()), key="openai_model")
 
 # Initialize clients based on model selection
-if model_selection == "GPT-4o-Mini":
+if model_selection == "GPT-3.5":
     openai.api_key = st.secrets["OPENAI_API_KEY"]
+    client = openai
 elif model_selection == "Google Gemini":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     model = gen_ai.GenerativeModel('gemini-pro')
@@ -72,32 +69,29 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Handle user input
-if prompt := st.chat_input("Message Octo..."):
+if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    if model_selection == "GPT-4o-Mini":
-        try:
-            with st.chat_message("assistant"):
-                response = openai.ChatCompletion.create(
-                    model=model_mapping[model_selection],
-                    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
-                )
-                assistant_message = response['choices'][0]['message']['content']
-                st.markdown(assistant_message)
-            st.session_state.messages.append({"role": "assistant", "content": assistant_message})
-        except Exception as e:
-            st.error(f"Error: {e}")
+    if model_selection == "GPT-3.5":
+        with st.chat_message("assistant"):
+            stream = client.ChatCompletion.create(
+                model=model_mapping[model_selection],
+                messages=[
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages
+                ],
+                stream=True,
+            )
+            response = st.write_stream(stream)
+        st.session_state.messages.append({"role": "assistant", "content": response})
     
     elif model_selection == "Google Gemini":
-        try:
-            with st.chat_message("assistant"):
-                gemini_response = st.session_state.chat_session.send_message(prompt)
-                st.markdown(gemini_response.text)
-                st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
-        except Exception as e:
-            st.error(f"Error: {e}")
+        with st.chat_message("assistant"):
+            gemini_response = st.session_state.chat_session.send_message(prompt)
+            st.markdown(gemini_response.text)
+            st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
 
 # Hide Streamlit's default elements
 hide_st_style = """
