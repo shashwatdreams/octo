@@ -72,7 +72,7 @@ if prompt := st.chat_input("What is up?", key="chat_input"):
 
     if model_selection == "GPT-3.5":
         with st.chat_message("assistant"):
-            stream = openai.ChatCompletion.create(
+            stream = openai.Client().chat.completions.create(
                 model=st.session_state["openai_model"],
                 messages=[
                     {"role": m["role"], "content": m["content"]}
@@ -82,8 +82,9 @@ if prompt := st.chat_input("What is up?", key="chat_input"):
             )
             response = ""
             for chunk in stream:
-                response += chunk["choices"][0]["delta"].get("content", "")
-                st.markdown(response)
+                content = chunk["choices"][0]["delta"].get("content", "")
+                response += content
+                st.markdown(content)
         st.session_state.messages.append({"role": "assistant", "content": response})
 
     elif model_selection == "Google Gemini":
