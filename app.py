@@ -12,7 +12,6 @@ st.set_page_config(
 )
 
 def check_password():
-def check_password():
     def password_entered():
         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
             st.session_state["password_correct"] = True
