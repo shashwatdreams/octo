@@ -62,44 +62,29 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("What is up?"):
+# Chat input handling
+if prompt := st.chat_input("What is up?", key="chat_input"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     if model_selection == "GPT-3.5":
-        if "openai_model" not in st.session_state:
-            st.session_state["openai_model"] = "gpt-3.5-turbo"
-
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
-
-        if prompt := st.chat_input("What is up?"):
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user"):
-                st.markdown(prompt)
-
-            with st.chat_message("assistant"):
-                stream = client.chat.completions.create(
-                    model=st.session_state["openai_model"],
-                    messages=[
-                        {"role": m["role"], "content": m["content"]}
-                        for m in st.session_state.messages
-                    ],
-                    stream=True,
-                )
-                response = st.write_stream(stream)
-            st.session_state.messages.append({"role": "assistant", "content": response})
-    
-    elif model_selection == "Google Gemini":
+        response = openai.ChatCompletion.create(
+            model=st.session_state["openai_model"],
+            messages=[
+                {"role": m["role"], "content": m["content"]}
+                for m in st.session_state.messages
+            ],
+        ).choices[0].message["content"]
         with st.chat_message("assistant"):
-            gemini_response = st.session_state.chat_session.send_message(prompt)
+            st.markdown(response)
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+    elif model_selection == "Google Gemini":
+        gemini_response = st.session_state.chat_session.send_message(prompt)
+        with st.chat_message("assistant"):
             st.markdown(gemini_response.text)
-            st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
+        st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
 
 hide_st_style = """
             <style>
