@@ -1,4 +1,4 @@
-from openai import OpenAI
+import openai
 import streamlit as st
 import hmac
 import google.generativeai as gen_ai
