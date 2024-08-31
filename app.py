@@ -68,10 +68,8 @@ if prompt := st.chat_input("What is up?"):
         st.markdown(prompt)
 
     if model_selection == "GPT-3.5":
-        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
         if "openai_model" not in st.session_state:
-            st.session_state["openai_model"] = model_mapping[model_selection]
+            st.session_state["openai_model"] = "gpt-3.5-turbo"
 
         if "messages" not in st.session_state:
             st.session_state.messages = []
