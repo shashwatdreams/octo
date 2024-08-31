@@ -4,6 +4,9 @@ import hmac
 import google.generativeai as gen_ai
 import anthropic
 
+# Debug: Check if the secrets are being loaded
+st.write(st.secrets)
+
 st.set_page_config(
     page_title="Octo Engine",
     menu_items={
