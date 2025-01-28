@@ -3,7 +3,6 @@ import streamlit as st
 import hmac
 import google.generativeai as gen_ai
 
-
 st.set_page_config(
     page_title="Octo Engine",
     menu_items={
@@ -31,7 +30,7 @@ if not check_password():
     st.stop()
 
 model_mapping = {
-    "GPT-3.5": "gpt-4o-mini",
+    "GPT-3.5": "gpt-4o-mini",  # Updated with gpt-4o-mini
     "Google Gemini": "google-gemini",
 }
 
@@ -45,10 +44,11 @@ col1, col2 = st.columns([3, 1])
 with col1:
     st.title("Octo")
 with col2:
-    model_selection = st.selectbox("", list(model_mapping.keys()), key="openai_model")
+    model_selection = st.selectbox("", list(model_mapping.keys()), key="model_selection")
 
 if model_selection == "GPT-3.5":
     openai.api_key = st.secrets["OPENAI_API_KEY"]
+
 elif model_selection == "Google Gemini":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     model = gen_ai.GenerativeModel('gemini-pro')
@@ -56,7 +56,7 @@ elif model_selection == "Google Gemini":
         st.session_state.chat_session = model.start_chat(history=[])
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4o-mini"
+    st.session_state["openai_model"] = model_mapping["GPT-3.5"]
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -65,33 +65,39 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("What is up?", key="chat_input"):
+if prompt := st.chat_input("enter message...", key="chat_input"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     if model_selection == "GPT-3.5":
         with st.chat_message("assistant"):
-            stream = openai.Client().chat.completions.create(
-                model=st.session_state["openai_model"],
-                messages=[
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ],
-                stream=True,
-            )
             response = ""
-            for chunk in stream:
-                content = chunk["choices"][0]["delta"].get("content", "")
-                response += content
-                st.markdown(content)
+            try:
+                stream = openai.ChatCompletion.create(
+                    model=st.session_state["openai_model"],
+                    messages=[
+                        {"role": m["role"], "content": m["content"]}
+                        for m in st.session_state.messages
+                    ],
+                    stream=True,
+                )
+                for chunk in stream:
+                    content = chunk["choices"][0]["delta"].get("content", "")
+                    response += content
+                    st.markdown(content)
+            except Exception as e:
+                st.error(f"Error: {e}")
         st.session_state.messages.append({"role": "assistant", "content": response})
 
     elif model_selection == "Google Gemini":
-        gemini_response = st.session_state.chat_session.send_message(prompt)
-        with st.chat_message("assistant"):
-            st.markdown(gemini_response.text)
-        st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
+        try:
+            gemini_response = st.session_state.chat_session.send_message(prompt)
+            with st.chat_message("assistant"):
+                st.markdown(gemini_response.text)
+            st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
+        except Exception as e:
+            st.error(f"Error: {e}")
 
 hide_st_style = """
             <style>
