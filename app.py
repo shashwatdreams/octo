@@ -31,7 +31,7 @@ if not check_password():
     st.stop()
 
 model_mapping = {
-    "GPT-3.5": "gpt-3.5-turbo",
+    "GPT-3.5": "gpt-4o-mini",
     "Google Gemini": "google-gemini",
 }
 
