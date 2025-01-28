@@ -32,7 +32,7 @@ if not check_password():
     st.stop()
 
 model_mapping = {
-    "GPT-3.5": "gpt-4o-mini",
+    "GPT-4o": "gpt-4o-mini",
     "Google Gemini": "google-gemini",
 }
 
@@ -48,7 +48,7 @@ with col1:
 with col2:
     model_selection = st.selectbox("", list(model_mapping.keys()), key="model_selection")
 
-if model_selection == "GPT-3.5":
+if model_selection == "GPT-4o":
     openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 elif model_selection == "Google Gemini":
@@ -58,7 +58,7 @@ elif model_selection == "Google Gemini":
         st.session_state.chat_session = model.start_chat(history=[])
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = model_mapping["GPT-3.5"]
+    st.session_state["openai_model"] = model_mapping["GPT-4o"]
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -72,7 +72,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    if model_selection == "GPT-3.5":
+    if model_selection == "GPT-4o":
         with st.chat_message("assistant"):
             response = ""
             try:
