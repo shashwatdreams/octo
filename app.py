@@ -76,7 +76,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
         with st.chat_message("assistant"):
             response = ""
             try:
-                completion = openai.ChatCompletion.create(
+                completion = openai_client.completions.create(
                     model=st.session_state["openai_model"],
                     messages=[
                         {"role": m["role"], "content": m["content"]}
