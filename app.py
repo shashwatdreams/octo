@@ -84,10 +84,12 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
                     ],
                     stream=True,
                 )
+                response_container = st.empty()  # create a single container
+                full_response = ""
                 for chunk in stream:
                     content = chunk.choices[0].delta.content or ""
-                    response += content
-                    st.markdown(content)
+                    full_response += content
+                    response_container.markdown(full_response)
             except Exception as e:
                 st.error(f"Error: {e}")
         st.session_state.messages.append({"role": "assistant", "content": response})
