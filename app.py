@@ -10,6 +10,7 @@ st.set_page_config(
     }
 )
 
+openai_client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 def check_password():
     def password_entered():
@@ -75,16 +76,16 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
         with st.chat_message("assistant"):
             response = ""
             try:
-                completion = openai_client.completions.create(
-                    model=st.session_state["openai_model"],
+                stream = openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
                     messages=[
                         {"role": m["role"], "content": m["content"]}
                         for m in st.session_state.messages
                     ],
                     stream=True,
                 )
-                for chunk in completion:
-                    content = chunk["choices"][0]["delta"].get("content", "")
+                for chunk in stream:
+                    content = chunk.choices[0].delta.content or ""
                     response += content
                     st.markdown(content)
             except Exception as e:
