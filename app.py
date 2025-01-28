@@ -30,7 +30,7 @@ if not check_password():
     st.stop()
 
 model_mapping = {
-    "GPT-3.5": "gpt-4o-mini",  # Updated with gpt-4o-mini
+    "GPT-3.5": "gpt-4o-mini",
     "Google Gemini": "google-gemini",
 }
 
@@ -74,7 +74,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
         with st.chat_message("assistant"):
             response = ""
             try:
-                stream = openai.ChatCompletion.create(
+                completion = openai.ChatCompletion.create(
                     model=st.session_state["openai_model"],
                     messages=[
                         {"role": m["role"], "content": m["content"]}
@@ -82,7 +82,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
                     ],
                     stream=True,
                 )
-                for chunk in stream:
+                for chunk in completion:
                     content = chunk["choices"][0]["delta"].get("content", "")
                     response += content
                     st.markdown(content)
