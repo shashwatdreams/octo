@@ -92,7 +92,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
                     response_container.markdown(full_response)
             except Exception as e:
                 st.error(f"Error: {e}")
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
 
     elif model_selection == "Google Gemini":
         try:
