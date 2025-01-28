@@ -44,7 +44,7 @@ st.markdown("""
 
 col1, col2 = st.columns([3, 1])
 with col1:
-    st.title("Octo")
+    st.title("octo")
 with col2:
     model_selection = st.selectbox("", list(model_mapping.keys()), key="model_selection")
 
