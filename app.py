@@ -10,6 +10,8 @@ st.set_page_config(
     }
 )
 
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
 def check_password():
     def password_entered():
         if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
