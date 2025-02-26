@@ -2,7 +2,6 @@ import openai
 import streamlit as st
 import hmac
 import google.generativeai as gen_ai
-from footer import footer 
 
 st.set_page_config(
     page_title="Octo Engine",
@@ -35,8 +34,8 @@ if not check_password():
 
 model_mapping = {
     "GPT-4o": "gpt-4o-mini",
-    "Google Gemini Flash 2.0": "google-gemini",
-    "Deepseek-R1": "deepseek-chat"
+    "Google Gemini": "google-gemini",
+    "Deepseek": "deepseek-chat"
 }
 
 st.markdown("""
@@ -54,11 +53,11 @@ with col2:
 # Model initialization
 if model_selection == "GPT-4o":
     openai.api_key = st.secrets["OPENAI_API_KEY"]
-elif model_selection == "Google Gemini Flash 2.0":
+elif model_selection == "Google Gemini":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     if "chat_session" not in st.session_state:
         st.session_state.chat_session = gen_ai.GenerativeModel('gemini-pro').start_chat(history=[])
-elif model_selection == "Deepseek-R1":
+elif model_selection == "Deepseek":
     if "deepseek_client" not in st.session_state:
         st.session_state.deepseek_client = openai.OpenAI(
             api_key=st.secrets["DEEPSEEK_API_KEY"],
@@ -102,7 +101,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
                 st.error(f"Error: {e}")
         st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    elif model_selection == "Google Gemini Flash 2.0":
+    elif model_selection == "Google Gemini":
         try:
             gemini_response = st.session_state.chat_session.send_message(prompt)
             with st.chat_message("assistant"):
@@ -111,7 +110,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
         except Exception as e:
             st.error(f"Error: {e}")
     
-    elif model_selection == "Deepseek-R1":
+    elif model_selection == "Deepseek":
         with st.chat_message("assistant"):
             response = ""
             try:
@@ -132,7 +131,6 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
             except Exception as e:
                 st.error(f"Error: {e}")
         st.session_state.messages.append({"role": "assistant", "content": full_response})
-
 
 hide_st_style = """
             <style>
