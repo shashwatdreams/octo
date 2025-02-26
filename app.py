@@ -34,8 +34,8 @@ if not check_password():
 
 model_mapping = {
     "GPT-4o": "gpt-4o-mini",
-    "Google Gemini F": "google-gemini",
-    "Deepseek": "deepseek-chat"
+    "Google Gemini Flash 2.0": "google-gemini",
+    "Deepseek-R1": "deepseek-chat"
 }
 
 st.markdown("""
@@ -50,14 +50,14 @@ with col1:
 with col2:
     model_selection = st.selectbox("", list(model_mapping.keys()), key="model_selection")
 
-# Model initialization
+# model initialization
 if model_selection == "GPT-4o":
     openai.api_key = st.secrets["OPENAI_API_KEY"]
-elif model_selection == "Google Gemini":
+elif model_selection == "Google Gemini Flash 2.0":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     if "chat_session" not in st.session_state:
         st.session_state.chat_session = gen_ai.GenerativeModel('gemini-pro').start_chat(history=[])
-elif model_selection == "Deepseek":
+elif model_selection == "Deepseek-R1":
     if "deepseek_client" not in st.session_state:
         st.session_state.deepseek_client = openai.OpenAI(
             api_key=st.secrets["DEEPSEEK_API_KEY"],
@@ -101,7 +101,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
                 st.error(f"Error: {e}")
         st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    elif model_selection == "Google Gemini":
+    elif model_selection == "Google Gemini Flash 2.0":
         try:
             gemini_response = st.session_state.chat_session.send_message(prompt)
             with st.chat_message("assistant"):
@@ -110,7 +110,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
         except Exception as e:
             st.error(f"Error: {e}")
     
-    elif model_selection == "Deepseek":
+    elif model_selection == "Deepseek-R1":
         with st.chat_message("assistant"):
             response = ""
             try:
@@ -140,30 +140,3 @@ hide_st_style = """
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
-
-st.markdown("""
-    <style>
-        .footer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #666;
-            width: 100%;
-            padding: 10px 10px;
-            margin-top: 20px;
-        }
-        .footer hr {
-            width: 100%;
-            border: none;
-            border-top: 1px solid #ddd;
-            margin-bottom: 5px;
-        }
-    </style>
-    <div class="footer">
-        <hr>
-        <p>use gemini for basic tasks cz it's the cheapest 🙏 alhamdulillah</p>
-    </div>
-""", unsafe_allow_html=True)
