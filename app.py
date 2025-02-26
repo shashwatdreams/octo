@@ -144,20 +144,26 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 st.markdown("""
     <style>
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
             text-align: center;
             font-size: 0.8rem;
             color: #666;
             width: 100%;
-            padding: 10px 0;
-            background: white;
+            padding: 10px 10px;
+            margin-top: 20px;
+        }
+        .footer hr {
+            width: 100%;
+            border: none;
+            border-top: 1px solid #ddd;
+            margin-bottom: 5px;
         }
     </style>
     <div class="footer">
-        <hr style="margin: 0; border: none; border-top: 1px solid #ddd;">
+        <hr>
         <p>use gemini for basic tasks cz it's the cheapest 🙏 alhamdulillah</p>
     </div>
 """, unsafe_allow_html=True)
