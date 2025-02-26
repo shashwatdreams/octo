@@ -34,7 +34,7 @@ if not check_password():
 
 model_mapping = {
     "GPT-4o": "gpt-4o-mini",
-    "Google Gemini": "google-gemini",
+    "Google Gemini F": "google-gemini",
     "Deepseek": "deepseek-chat"
 }
 
@@ -142,8 +142,22 @@ hide_st_style = """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
 st.markdown("""
-    <hr style="margin-top: 3rem; margin-bottom: 1rem; border: none; border-top: 1px solid #ddd;">
-    <p style="text-align: center; font-size: 0.8rem; color: #666;">
-        use gemini for basic tasks cz it's the cheapest 🙏 alhamdulillah
-    </p>
+    <style>
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            width: 100%;
+            padding: 10px 0;
+            background: white;
+        }
+    </style>
+    <div class="footer">
+        <hr style="margin: 0; border: none; border-top: 1px solid #ddd;">
+        <p>use gemini for basic tasks cz it's the cheapest 🙏 alhamdulillah</p>
+    </div>
 """, unsafe_allow_html=True)
