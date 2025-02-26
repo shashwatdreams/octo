@@ -56,7 +56,7 @@ if model_selection == "GPT-4o":
 elif model_selection == "Google Gemini Flash 2.0":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     if "chat_session" not in st.session_state:
-        st.session_state.chat_session = gen_ai.GenerativeModel('gemini-pro').start_chat(history=[])
+        st.session_state.chat_session = gen_ai.GenerativeModel('gemini-2.0-flash').start_chat(history=[])
 elif model_selection == "Deepseek-R1":
     if "deepseek_client" not in st.session_state:
         st.session_state.deepseek_client = openai.OpenAI(
