@@ -140,3 +140,10 @@ hide_st_style = """
             </style>
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
+st.markdown("""
+    <hr style="margin-top: 3rem; margin-bottom: 1rem; border: none; border-top: 1px solid #ddd;">
+    <p style="text-align: center; font-size: 0.8rem; color: #666;">
+        use gemini for basic tasks cz it's the cheapest 🙏 alhamdulillah
+    </p>
+""", unsafe_allow_html=True)
