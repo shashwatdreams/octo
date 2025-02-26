@@ -10,6 +10,7 @@ st.set_page_config(
     }
 )
 
+# Initialize clients
 openai_client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 def check_password():
@@ -34,6 +35,7 @@ if not check_password():
 model_mapping = {
     "GPT-4o": "gpt-4o-mini",
     "Google Gemini": "google-gemini",
+    "Deepseek": "deepseek-chat"
 }
 
 st.markdown("""
@@ -48,14 +50,19 @@ with col1:
 with col2:
     model_selection = st.selectbox("", list(model_mapping.keys()), key="model_selection")
 
+# Model initialization
 if model_selection == "GPT-4o":
     openai.api_key = st.secrets["OPENAI_API_KEY"]
-
 elif model_selection == "Google Gemini":
     gen_ai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = gen_ai.GenerativeModel('gemini-pro')
     if "chat_session" not in st.session_state:
-        st.session_state.chat_session = model.start_chat(history=[])
+        st.session_state.chat_session = gen_ai.GenerativeModel('gemini-pro').start_chat(history=[])
+elif model_selection == "Deepseek":
+    if "deepseek_client" not in st.session_state:
+        st.session_state.deepseek_client = openai.OpenAI(
+            api_key=st.secrets["DEEPSEEK_API_KEY"],
+            base_url="https://api.deepseek.com"
+        )
 
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = model_mapping["GPT-4o"]
@@ -84,7 +91,7 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
                     ],
                     stream=True,
                 )
-                response_container = st.empty()  # create a single container
+                response_container = st.empty()
                 full_response = ""
                 for chunk in stream:
                     content = chunk.choices[0].delta.content or ""
@@ -102,6 +109,28 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
             st.session_state.messages.append({"role": "assistant", "content": gemini_response.text})
         except Exception as e:
             st.error(f"Error: {e}")
+    
+    elif model_selection == "Deepseek":
+        with st.chat_message("assistant"):
+            response = ""
+            try:
+                stream = st.session_state.deepseek_client.chat.completions.create(
+                    model="deepseek-chat",
+                    messages=[
+                        {"role": m["role"], "content": m["content"]}
+                        for m in st.session_state.messages
+                    ],
+                    stream=True,
+                )
+                response_container = st.empty()
+                full_response = ""
+                for chunk in stream:
+                    content = chunk.choices[0].delta.content or ""
+                    full_response += content
+                    response_container.markdown(full_response)
+            except Exception as e:
+                st.error(f"Error: {e}")
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 hide_st_style = """
             <style>
