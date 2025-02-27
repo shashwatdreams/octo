@@ -135,7 +135,6 @@ if prompt := st.chat_input("enter message...", key="chat_input"):
 hide_st_style = """
             <style>
             #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
             header {visibility: hidden;}
             </style>
             """
